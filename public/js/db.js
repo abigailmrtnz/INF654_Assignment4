@@ -8,6 +8,7 @@
     addDoc,
     deleteDoc,
     doc,
+    enableIndexedDbPersistence,
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
   // TODO: Add SDKs for Firebase products that you want to use
   // https://firebase.google.com/docs/web/setup#available-libraries
@@ -32,6 +33,37 @@
     const mealList = mealSnapshot.docs.map((doc) => doc);
     return mealList;
   }
+
+  //lets you see data offline from cache, 
+  //can still navigate through application
+ /* enableIndexedDbPersistence(db)
+    .catch ((err) => {
+      if (err.code == 'failed-precondition') {
+        // Multiple tabs open, persistance can only be enabled
+        // In one tab at a time.
+        console.log("Persistence failed")
+      } else if (err.code == 'unimplemented') {
+        // The current browser does not support all of the
+        // features required to enable persistence
+        console.log("Persistence is not valid")
+      }
+    });
+    */
+
+// Enable offline persistence
+enableIndexedDbPersistence(db)
+.then(() => {
+  // Subsequent queries will use persistence
+  console.log('Offline persistence enabled successfully');
+})
+.catch((err) => {
+  if (err.code === 'failed-precondition') {
+    console.log('Multiple tabs open, persistence can only be enabled in one tab at a time.');
+  } else if (err.code === 'unimplemented') {
+    console.log('The current browser does not support all features required to enable persistence.');
+  }
+});
+
 
 const unsub = onSnapshot(collection(db, "meals"), (doc) => {
     //console.log(doc.docChanges());
