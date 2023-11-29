@@ -36,7 +36,7 @@
 
   //lets you see data offline from cache, 
   //can still navigate through application
- /* enableIndexedDbPersistence(db)
+enableIndexedDbPersistence(db)
     .catch ((err) => {
       if (err.code == 'failed-precondition') {
         // Multiple tabs open, persistance can only be enabled
@@ -48,22 +48,6 @@
         console.log("Persistence is not valid")
       }
     });
-    */
-
-// Enable offline persistence
-enableIndexedDbPersistence(db)
-.then(() => {
-  // Subsequent queries will use persistence
-  console.log('Offline persistence enabled successfully');
-})
-.catch((err) => {
-  if (err.code === 'failed-precondition') {
-    console.log('Multiple tabs open, persistence can only be enabled in one tab at a time.');
-  } else if (err.code === 'unimplemented') {
-    console.log('The current browser does not support all features required to enable persistence.');
-  }
-});
-
 
 const unsub = onSnapshot(collection(db, "meals"), (doc) => {
     //console.log(doc.docChanges());
