@@ -20,7 +20,9 @@ import { getAuth,
 
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app)
+  const auth = getAuth(app);
+
+
 
   //sign up
   const signupForm = document.querySelector("#signup-form");
@@ -41,4 +43,39 @@ createUserWithEmailAndPassword(auth, email, password).then((userCredentials) => 
     const errorCode = error.code;
     const errorMessage = error.message;
   });
+});
+
+
+//log out
+const logout = document.querySelector("#logout");
+logout.addEventListener("click", (e) => {
+  e.preventDefault();
+  signOut(auth).then(() => {
+    console.log("Signed out");
+  })
+  .catch((error) => {
+    //error handler
+  });
+});
+
+//login
+const loginForm = document.querySelector("#login-form");
+loginForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const email = loginForm["login-email"].value;
+  const password = loginForm["login-password"].value;
+  signInWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+      // Signed in
+      const user = userCredential.user;
+      console.log(user);
+      const modal = document.querySelector("#modal-login");
+      M.Modal.getInstance(modal).close();
+      loginForm.reset();
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      //...
+    });
 });

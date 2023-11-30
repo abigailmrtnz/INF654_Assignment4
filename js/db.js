@@ -10,6 +10,9 @@
     doc,
     enableIndexedDbPersistence,
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { 
+  getAuth,
+  onAuthStateChanged, } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
   // TODO: Add SDKs for Firebase products that you want to use
   // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -26,6 +29,7 @@
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const auth = getAuth(app);
 
   async function getMeals(db) {
     const mealsCol = collection(db, "meals");
@@ -65,7 +69,7 @@ const unsub = onSnapshot(collection(db, "meals"), (doc) => {
 });
 
 //add new meal
-const form = document.querySelector("form");
+/*const form = document.querySelector("form");
 form.addEventListener("submit", (event) => {
   event.preventDefault();
 
@@ -75,11 +79,10 @@ addDoc(collection(db, "meals"), {
   }).catch((error) => console.log(error));
   form.title.value = "";
   form.description.value = "";
-});
+});*/
 
 
 //delete a meal
-
 const mealContainer = document.querySelector(".meals");
 mealContainer.addEventListener("click", (event) => {
 //console.log(event);
@@ -88,3 +91,29 @@ if (event.target.tagName === "I") {
   deleteDoc(doc(db, "meals", id));
 }
 });
+
+  //listen for auth status changes
+  onAuthStateChanged(auth, (user) => {
+    if(user) {
+      console.log("Logged in: ", user.email);
+      getMeals(db).then((snapshot) => {
+        setupMeals(snapshot);
+      });
+      setupUI(user);
+      const form = document.querySelector("form");
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        addDoc(collection(db, "meals"), {
+          title: form.title.value,
+          description: form.description.value,
+        }).catch((error) => console.log(error));
+        form.title.value = "";
+        form.description.value = "";
+      });
+    } else {
+        console.log("Logged out");
+        setupUI();
+        setupMeals([]);
+    }
+  });

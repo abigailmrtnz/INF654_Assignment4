@@ -9,6 +9,19 @@ document.addEventListener("DOMContentLoaded", function(){
 
 
 const meals = document.querySelector(".meals");
+const loggedOutLinks = document.querySelectorAll(".logged-out");
+const loggedInLinks = document.querySelectorAll(".logged-in");
+
+const setupUI = (user) => {
+  if(user) {
+    //toggle UI elements
+    loggedOutLinks.forEach((item) => (item.style.display = "none"));
+    loggedInLinks.forEach((item) => (item.style.display = "block"));
+  }else {
+    loggedOutLinks.forEach((item) => (item.style.display = "block"));
+    loggedInLinks.forEach((item) => (item.style.display = "none"));
+  }
+};
 
 document.addEventListener("DOMContentLoaded", function () {
   //Nav Menu
@@ -18,6 +31,28 @@ document.addEventListener("DOMContentLoaded", function () {
   const forms = document.querySelectorAll(".side-form");
   M.Sidenav.init(forms, { edge: "left" });
 });
+
+//populate data when user is signed in
+const setupMeals = (data) => {
+  let html ="";
+  data.forEach((doc) => {
+    const meal = doc.data();
+    const li = `
+    <div class="card-panel meal white row" data-id ="${meal.id}">
+    <img src="/img/task.png" class="responsive-img materialboxed" alt="">
+    <div class="meal-detail">
+      <div class="meal-title">${meal.title}</div>
+      <div class="meal-description">${meal.description}</div>
+    </div>
+    <div class="meal-delete">
+      <i class="material-icons" data-id="${meal.id}">delete_outline</i>
+    </div>
+    </div>
+    `;
+    html += li;
+  })
+  meals.innerHTML = html;
+}
 
 const renderMeal =(data, id) => {
   const html = `
